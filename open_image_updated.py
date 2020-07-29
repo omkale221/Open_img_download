@@ -9,23 +9,31 @@ import config
 
 
 def downnload_images(q, q1, total_images, starting_counter):
-
+    success_file = read_csv(config.SUCCESS_FILE)
+    fail_file = read_csv(config.FAIL_FILE)
+    success_list = success_file.img_id.tolist()
+    fail_list = fail_file.img_id.tolist()
     timer = datetime.now()
 
     while not q.empty():
         counter, img, url = q.get()
+        if img in success_list or img in fail_list:
+            continue
         folder_name = config.FOLDER_NAME + str(counter // config.FOLDER_IMG_COUNT)
         filename = folder_name + '/' + img + '.jpg'
-        print(counter, ": ", img)
+
 
         if os.path.isfile(filename):
             continue
+
+        print(counter, ": ", img, str(counter // config.FOLDER_IMG_COUNT))
+
 
        #    TIME CALCULATION FOR DATA DOWNLOADING
         if counter % config.TIMER_IMAGE_COUNT == 0:
             tt = (datetime.now() - timer).seconds
             remaining_img = (total_images - (counter - config.STARTING_COUNTER))
-            print('time required for 50 images ', tt, 'remaining time for ', remaining_img, ' images ',
+            print('time required for 51 images ', tt, 'remaining time for ', remaining_img, ' images ',
                   remaining_img * timedelta(seconds=tt / config.TIMER_IMAGE_COUNT))
             timer = datetime.now()
 
@@ -39,6 +47,7 @@ def downnload_images(q, q1, total_images, starting_counter):
         # DOWNLOADING IMAGES
         response = get(url)
         status = str(response.status_code)
+        print(status)
         size = len(response.content)  # Returns size in bytes
 
         # DOWNLOADING VALID IMAGES
@@ -54,7 +63,12 @@ def downnload_images(q, q1, total_images, starting_counter):
 
 # CREATING LOG LIST
 def write_to_file(q):
-
+    if not os.path.isfile(config.SUCCESS_FILE):
+        with open(config.SUCCESS_FILE, 'a') as s:
+            s.write("img_id\n")
+    if not os.path.isfile(config.FAIL_FILE):
+        with open(config.FAIL_FILE, 'a') as s:
+            s.write("img_id\n")
     while True:
         img, flag = q.get()
         if flag == 0:
