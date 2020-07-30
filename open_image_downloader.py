@@ -24,7 +24,8 @@ def downnload_images(q, q1, total_images, starting_counter):
         if os.path.isfile(filename):
             continue
 
-        print(counter, ": ", img, str(counter // config.FOLDER_IMG_COUNT))
+        print("No-",(counter - config.STARTING_COUNTER), ",     ImageID--> ", img,",     FOLDER-->", str(counter // config.FOLDER_IMG_COUNT) ,
+              "     complete---->",((counter - config.STARTING_COUNTER)/config.STARTING_COUNTER)*100,"%" )
 
         #    TIME CALCULATION FOR DATA DOWNLOADING
         if counter % config.TIMER_IMAGE_COUNT == 0:
@@ -43,7 +44,7 @@ def downnload_images(q, q1, total_images, starting_counter):
         # DOWNLOADING IMAGES
         response = get(url)
         status = str(response.status_code)
-        print(status)
+        print("status------------------------>" , status)
         size = len(response.content)  # Returns size in bytes
 
         # DOWNLOADING VALID IMAGES
@@ -68,11 +69,9 @@ def write_to_file(q):
     while True:
         img, flag = q.get()
         if flag == 0:
-            print('success ', img)
             with open(config.SUCCESS_FILE, 'a+') as s:
                 s.write(img + "\n")
         elif flag == 1:
-            print('failed ', img)
             with open(config.FAIL_FILE, 'a+') as f:
                 f.write(img + "\n")
         elif flag == 2:
@@ -94,6 +93,7 @@ if __name__ == '__main__':
     urls = csv_file.OriginalURL.tolist()
     total_images = len(imgs)
     counter = config.STARTING_COUNTER
+
     flag = 0
 
     #
