@@ -7,7 +7,6 @@ import threading
 import config
 
 
-
 def downnload_images(q, q1, total_images, starting_counter):
     success_file = read_csv(config.SUCCESS_FILE)
     fail_file = read_csv(config.FAIL_FILE)
@@ -22,14 +21,12 @@ def downnload_images(q, q1, total_images, starting_counter):
         folder_name = config.FOLDER_NAME + str(counter // config.FOLDER_IMG_COUNT)
         filename = folder_name + '/' + img + '.jpg'
 
-
         if os.path.isfile(filename):
             continue
 
         print(counter, ": ", img, str(counter // config.FOLDER_IMG_COUNT))
 
-
-       #    TIME CALCULATION FOR DATA DOWNLOADING
+        #    TIME CALCULATION FOR DATA DOWNLOADING
         if counter % config.TIMER_IMAGE_COUNT == 0:
             tt = (datetime.now() - timer).seconds
             remaining_img = (total_images - (counter - config.STARTING_COUNTER))
@@ -43,7 +40,6 @@ def downnload_images(q, q1, total_images, starting_counter):
                 os.makedirs(folder_name)
             except FileExistsError:
                 pass
-
         # DOWNLOADING IMAGES
         response = get(url)
         status = str(response.status_code)
@@ -64,23 +60,24 @@ def downnload_images(q, q1, total_images, starting_counter):
 # CREATING LOG LIST
 def write_to_file(q):
     if not os.path.isfile(config.SUCCESS_FILE):
-        with open(config.SUCCESS_FILE, 'a') as s:
+        with open(config.SUCCESS_FILE, 'a+') as s:
             s.write("img_id\n")
     if not os.path.isfile(config.FAIL_FILE):
-        with open(config.FAIL_FILE, 'a') as s:
+        with open(config.FAIL_FILE, 'a+') as s:
             s.write("img_id\n")
     while True:
         img, flag = q.get()
         if flag == 0:
-            with open(config.SUCCESS_FILE, 'a') as s:
+            print('success ', img)
+            with open(config.SUCCESS_FILE, 'a+') as s:
                 s.write(img + "\n")
-
         elif flag == 1:
-            with open(config.FAIL_FILE, 'a') as f:
+            print('failed ', img)
+            with open(config.FAIL_FILE, 'a+') as f:
                 f.write(img + "\n")
-
         elif flag == 2:
             break
+
 
 if __name__ == '__main__':
     # INITIALIZING QUEUE
@@ -90,7 +87,6 @@ if __name__ == '__main__':
     q2 = Queue()
     q3 = Queue()
     q4 = Queue()
-
 
     csv_file = read_csv(config.ANN_FILE)
 
@@ -122,4 +118,3 @@ if __name__ == '__main__':
     t2 = threading.Thread(target=downnload_images, args=(q2, q4, total_images, config.STARTING_COUNTER)).start()
     t3 = threading.Thread(target=downnload_images, args=(q3, q4, total_images, config.STARTING_COUNTER)).start()
     t4 = threading.Thread(target=write_to_file, args=(q4,)).start()
-
