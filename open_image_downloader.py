@@ -25,8 +25,7 @@ def downnload_images(q, q1, total_images, starting_counter):
             continue
 
         print("No-", (counter - config.STARTING_COUNTER), ",     ImageID--> ", img, ",     FOLDER-->",
-              str(counter // config.FOLDER_IMG_COUNT),
-              "     complete---->", ((counter - config.STARTING_COUNTER) / config.STARTING_COUNTER) * 100, "%")
+              str(counter // config.FOLDER_IMG_COUNT))
 
         #    TIME CALCULATION FOR DATA DOWNLOADING
         if counter % config.TIMER_IMAGE_COUNT == 0:
