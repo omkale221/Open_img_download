@@ -24,8 +24,9 @@ def downnload_images(q, q1, total_images, starting_counter):
         if os.path.isfile(filename):
             continue
 
-        print("No-",(counter - config.STARTING_COUNTER), ",     ImageID--> ", img,",     FOLDER-->", str(counter // config.FOLDER_IMG_COUNT) ,
-              "     complete---->",((counter - config.STARTING_COUNTER)/config.STARTING_COUNTER)*100,"%" )
+        print("No-", (counter - config.STARTING_COUNTER), ",     ImageID--> ", img, ",     FOLDER-->",
+              str(counter // config.FOLDER_IMG_COUNT),
+              "     complete---->", ((counter - config.STARTING_COUNTER) / config.STARTING_COUNTER) * 100, "%")
 
         #    TIME CALCULATION FOR DATA DOWNLOADING
         if counter % config.TIMER_IMAGE_COUNT == 0:
@@ -44,7 +45,7 @@ def downnload_images(q, q1, total_images, starting_counter):
         # DOWNLOADING IMAGES
         response = get(url)
         status = str(response.status_code)
-        print("status------------------------>" , status)
+        print("status------------------------>", status)
         size = len(response.content)  # Returns size in bytes
 
         # DOWNLOADING VALID IMAGES
